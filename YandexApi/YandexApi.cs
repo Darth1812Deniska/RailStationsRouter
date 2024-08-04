@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Text.Json;
-using RailStationsRouterCommonClasses.GeoRaspClasses;
+using YandexRaspApi.StationsListTypes;
 
 namespace YandexRaspApi
 {
