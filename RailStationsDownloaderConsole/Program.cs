@@ -1,4 +1,4 @@
-using System.Reflection.Emit;
+﻿using System.Reflection.Emit;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
@@ -24,7 +24,7 @@ YandexApi yandexApi = new YandexApi(downloaderSettings.YandexRaspApiToken);
 Root? root = yandexApi.GetStationsList();
 
 
-
+string connString = string.Empty;
 
 NpgsqlDataSourceBuilder dataSourceBuilder = new NpgsqlDataSourceBuilder(connString);
 NpgsqlDataSource dataSource = dataSourceBuilder.Build();
