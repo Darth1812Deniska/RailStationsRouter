@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Text.Json;
+using YandexRaspApi.StationsListTypes;
 
 namespace YandexRaspApi
 {
@@ -15,7 +17,7 @@ namespace YandexRaspApi
             _apiToken = apiToken;
         }
 
-        public string GetStationsList()
+        public string GetStationsListJson()
         {
             string result = string.Empty;
             
@@ -35,6 +37,13 @@ namespace YandexRaspApi
             }
 
             return result;
+        }
+
+        public Root? GetStationsList()
+        {
+            string jsonResult = GetStationsListJson();
+            var root = JsonSerializer.Deserialize<Root>(jsonResult);
+            return root;
         }
     }
 }
