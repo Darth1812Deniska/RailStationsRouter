@@ -1,42 +1,49 @@
-```
-# Build artifacts
+# Compiled and build artifacts
+*.pyc
+__pycache__/
 *.o
 *.obj
+*.class
 *.exe
 *.dll
 *.so
 *.a
 *.out
-*.class
-*.pyc
-__pycache__/
 
 # Dependencies
-node_modules/
-venv/
 .venv/
-.env
-.env.local
-.env.*
+venv/
+node_modules/
+.mypy_cache/
+.pytest_cache/
+dist/
+build/
+target/
+.gradle/
 
-# IDE/Editor files
-.vscode/
-.idea/
+# Logs and temp files
+*.log
+*.tmp
 *.swp
 *.swo
-*.tmp
 
-# Logs
-*.log
+# Environment
+.env
+.env.local
+*.env.*
 
-# Test coverage
+# Editors
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Coverage
 coverage/
 htmlcov/
 .coverage
-
-# OS files
-.DS_Store
-Thumbs.db
 
 # Compressed files
 *.zip
@@ -61,15 +68,3 @@ Thumbs.db
 *.tar.bz2
 *.tar.xz
 *.tar.zst
-```
-.vs/
-RailStationsDownloaderConsole/bin/
-RailStationsDownloaderConsole/obj/
-RailStationsRouterCommonClasses/bin/
-RailStationsRouterCommonClasses/obj/
-RailStationsRouterDatabase/obj/
-YandexApi/bin/
-YandexApi/obj/
-RailStationsRouterCommonClasses.Tests/bin/
-RailStationsRouterCommonClasses.Tests/obj/
-*.user
