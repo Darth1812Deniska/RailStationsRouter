@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Text.Json;
 using YandexRaspApi.StationsListTypes;
 
@@ -19,22 +21,26 @@ namespace YandexRaspApi
 
         public string GetStationsListJson()
         {
-            string result = string.Empty;
-            
             Dictionary<string, string?> paramsDictionary = new Dictionary<string, string?>()
             {
                 { "apikey", ApiToken },
                 { "format", null },
                 { "lang", null }
             };
-            List<string> preparedParams = paramsDictionary.Where(dict => dict.Value != null)
-                .Select(dict => $"{dict.Key}={dict.Value}").ToList();
-            string paramsString = $"?{string.Join("&", preparedParams)}";
-            string queryWithParams = $"{StationsListAddress}{paramsString}";
-            using (var client = new HttpClient())
+
+            NameValueCollection queryString = System.Web.HttpUtility.ParseQueryString(String.Empty);
+            foreach (KeyValuePair<string, string?> pair in paramsDictionary)
             {
-                result = client.GetStringAsync(queryWithParams).Result;
+                if (!string.IsNullOrEmpty(pair.Value))
+                {
+                    queryString.Add(pair.Key, pair.Value);
+                }
             }
+
+            using var client = new HttpClient();
+            client.BaseAddress = StationsListUri;
+            
+            var result = client.GetStringAsync($"{StationsListUri}?{queryString}").Result;
 
             return result;
         }

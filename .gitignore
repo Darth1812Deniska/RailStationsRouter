@@ -62,3 +62,11 @@ Thumbs.db
 *.tar.xz
 *.tar.zst
 ```
+.vs/
+RailStationsDownloaderConsole/bin/
+RailStationsDownloaderConsole/obj/
+RailStationsRouterCommonClasses/bin/
+RailStationsRouterCommonClasses/obj/
+RailStationsRouterDatabase/obj/
+YandexApi/bin/
+YandexApi/obj/
