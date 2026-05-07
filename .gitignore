@@ -1,92 +1,64 @@
 ```
-# Build outputs
-bin/
-obj/
-out/
-dist/
-build/
-target/
-
-# Dependencies
-packages/
-node_modules/
-vendor/
-
-# Logs
-*.log
-**/logs/
-
-# User-specific files
-.vs/
-.vscode/
-.idea/
-*.userprefs
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-
-# Environment specific settings
-.env
-.env.local
-.env.*
-!src/main/resources/application.properties
-!src/main/resources/application.yml
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-desktop.ini
-
-# Compiled files
+# Build artifacts
+*.o
+*.obj
 *.exe
 *.dll
 *.so
-*.dylib
-*.class
-*.o
 *.a
-*.lib
-*.obj
 *.out
+*.class
+*.pyc
+__pycache__/
 
-# Configuration files
-appsettings*.json
-connectionstrings*.json
+# Dependencies
+node_modules/
+venv/
+.venv/
+.env
+.env.local
+.env.*
 
-# Temporary files
+# IDE/Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
 *.tmp
-*.temp
-*.bak
-*.cache
-*.cached
-*.backup
 
-# Test results
-TestResults/
+# Logs
+*.log
+
+# Test coverage
 coverage/
-*.cover
-*.gcda
-*.gcno
+htmlcov/
+.coverage
 
-# Database
-*.db
-*.db3
-*.sqlite
-*.sqlite3
+# OS files
+.DS_Store
+Thumbs.db
 
-# NuGet packages
-*.nupkg
-*.snupkg
-**/packages/**
-!packages.config
-
-# Visual Studio Code
-.vscode/tasks.json
-.vscode/launch.json
+# Compressed files
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
 ```
