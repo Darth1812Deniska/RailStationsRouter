@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="DbFunctions\" />
-    <Folder Include="SQLite\" />
   </ItemGroup>
 
   <ItemGroup>

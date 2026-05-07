@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace RailStationsRouterCommonClasses.PostgreSQL;
+namespace RailStationsRouterCommonClasses.DB.PostgreSQL;
 
 /// <summary>
 /// Модуль для сохранения объектов из Яндекс.Расписания в базу данных PostgreSQL

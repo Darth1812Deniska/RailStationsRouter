@@ -2,8 +2,9 @@
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using RailStationsRouterCommonClasses;
-using RailStationsRouterCommonClasses.PostgreSQL;
-using RailStationsRouterCommonClasses.SQLite;
+using RailStationsRouterCommonClasses.DB;
+using RailStationsRouterCommonClasses.DB.PostgreSQL;
+using RailStationsRouterCommonClasses.DB.SQLite;
 using YandexRaspApi;
 using YandexRaspApi.StationsListTypes;
 

@@ -1,6 +1,6 @@
 using Microsoft.Data.Sqlite;
 
-namespace RailStationsRouterCommonClasses.SQLite;
+namespace RailStationsRouterCommonClasses.DB.SQLite;
 
 /// <summary>
 /// Модуль для сохранения объектов из Яндекс.Расписания в локальную SQLite базу данных

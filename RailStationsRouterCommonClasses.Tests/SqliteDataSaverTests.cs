@@ -1,4 +1,5 @@
-using RailStationsRouterCommonClasses.SQLite;
+using RailStationsRouterCommonClasses.DB.SQLite;
+using Xunit;
 
 namespace RailStationsRouterCommonClasses.Tests;
 

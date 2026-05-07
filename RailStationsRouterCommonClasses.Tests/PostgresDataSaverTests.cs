@@ -1,4 +1,5 @@
-using RailStationsRouterCommonClasses.PostgreSQL;
+using RailStationsRouterCommonClasses.DB.PostgreSQL;
+using Xunit;
 
 namespace RailStationsRouterCommonClasses.Tests;
 

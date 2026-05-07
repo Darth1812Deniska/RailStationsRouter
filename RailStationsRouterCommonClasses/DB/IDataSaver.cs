@@ -1,4 +1,4 @@
-namespace RailStationsRouterCommonClasses;
+namespace RailStationsRouterCommonClasses.DB;
 
 /// <summary>
 /// Интерфейс для модулей сохранения данных о станциях

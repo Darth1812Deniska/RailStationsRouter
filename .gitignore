@@ -70,3 +70,6 @@ RailStationsRouterCommonClasses/obj/
 RailStationsRouterDatabase/obj/
 YandexApi/bin/
 YandexApi/obj/
+RailStationsRouterCommonClasses.Tests/bin/
+RailStationsRouterCommonClasses.Tests/obj/
+*.user
