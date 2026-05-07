@@ -1,27 +1,37 @@
 ```
-# Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
+# Build outputs
+bin/
+obj/
+out/
+dist/
 build/
-bld/
-[Bb]in/
-[Oo]bj/
+target/
 
-# Visual Studio files
+# Dependencies
+packages/
+node_modules/
+vendor/
+
+# Logs
+*.log
+**/logs/
+
+# User-specific files
+.vs/
+.vscode/
+.idea/
+*.userprefs
+*.suo
 *.user
 *.userosscache
 *.sln.docstates
-*.userprefs
-project.lock.json
-project.fragment.lock.json
-artifacts/
 
-# Visual Studio Code files
-.vscode/
+# Environment specific settings
+.env
+.env.local
+.env.*
+!src/main/resources/application.properties
+!src/main/resources/application.yml
 
 # OS generated files
 .DS_Store
@@ -33,30 +43,50 @@ ehthumbs.db
 Thumbs.db
 desktop.ini
 
-# Environment specific settings
-.env
-.env.local
-*.env.*
-
-# Dependencies
-node_modules/
-packages/
-
-# Logs
-*.log
-
-# User-specific files
-*.userprefs
-*.localsettings
-
-# Compiled binaries
-*.dll
+# Compiled files
 *.exe
-*.pdb
+*.dll
 *.so
 *.dylib
+*.class
+*.o
+*.a
+*.lib
+*.obj
+*.out
 
-# Configuration files that might contain secrets
-appsettings.Production.json
-appsettings.Development.json
+# Configuration files
+appsettings*.json
+connectionstrings*.json
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.cache
+*.cached
+*.backup
+
+# Test results
+TestResults/
+coverage/
+*.cover
+*.gcda
+*.gcno
+
+# Database
+*.db
+*.db3
+*.sqlite
+*.sqlite3
+
+# NuGet packages
+*.nupkg
+*.snupkg
+**/packages/**
+!packages.config
+
+# Visual Studio Code
+.vscode/tasks.json
+.vscode/launch.json
 ```
