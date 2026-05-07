@@ -1,5 +1,4 @@
 using Npgsql;
-using NpgsqlTypes;
 
 namespace RailStationsRouterCommonClasses.PostgreSQL;
 
@@ -13,6 +12,8 @@ public class PostgresDataSaver : IDataSaver
 
     public PostgresDataSaver(string connectionString)
     {
+        ArgumentNullException.ThrowIfNull(connectionString);
+        
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
         _dataSource = dataSourceBuilder.Build();
     }
@@ -22,18 +23,11 @@ public class PostgresDataSaver : IDataSaver
     /// </summary>
     public long AddCode(string? yandexCode, string? esrCode)
     {
-        long result = 0;
         using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_code(:p_yandex_code, :p_esr_code);");
         command.Parameters.AddWithValue("p_yandex_code", yandexCode ?? string.Empty);
         command.Parameters.AddWithValue("p_esr_code", esrCode ?? string.Empty);
         
-        var rawResult = command.ExecuteScalarAsync().Result;
-        if (rawResult != null)
-        {
-            result = (long)rawResult;
-        }
-
-        return result;
+        return ExecuteScalarCommand(command);
     }
 
     /// <summary>
@@ -41,18 +35,13 @@ public class PostgresDataSaver : IDataSaver
     /// </summary>
     public long AddCountry(long codeId, string title)
     {
-        long result = 0;
+        ArgumentNullException.ThrowIfNull(title);
+        
         using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_country(:p_codeid, :p_title);");
         command.Parameters.AddWithValue("p_codeid", codeId);
         command.Parameters.AddWithValue("p_title", title);
         
-        var rawResult = command.ExecuteScalarAsync().Result;
-        if (rawResult != null)
-        {
-            result = (long)rawResult;
-        }
-
-        return result;
+        return ExecuteScalarCommand(command);
     }
 
     /// <summary>
@@ -60,18 +49,13 @@ public class PostgresDataSaver : IDataSaver
     /// </summary>
     public long AddRegion(long codeId, string title)
     {
-        long result = 0;
+        ArgumentNullException.ThrowIfNull(title);
+        
         using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_region(:p_code_id, :p_title);");
         command.Parameters.AddWithValue("p_code_id", codeId);
         command.Parameters.AddWithValue("p_title", title);
         
-        var rawResult = command.ExecuteScalarAsync().Result;
-        if (rawResult != null)
-        {
-            result = (long)rawResult;
-        }
-
-        return result;
+        return ExecuteScalarCommand(command);
     }
 
     /// <summary>
@@ -82,7 +66,7 @@ public class PostgresDataSaver : IDataSaver
         using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_region_to_country(:p_country_id, :p_region_id);");
         command.Parameters.AddWithValue("p_country_id", countryId);
         command.Parameters.AddWithValue("p_region_id", regionId);
-        command.ExecuteScalarAsync();
+        ExecuteNonQueryCommand(command);
     }
 
     /// <summary>
@@ -90,18 +74,13 @@ public class PostgresDataSaver : IDataSaver
     /// </summary>
     public long AddSettlement(long codeId, string title)
     {
-        long result = 0;
+        ArgumentNullException.ThrowIfNull(title);
+        
         using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_settlement(:p_code_id, :p_title);");
         command.Parameters.AddWithValue("p_code_id", codeId);
         command.Parameters.AddWithValue("p_title", title);
         
-        var rawResult = command.ExecuteScalarAsync().Result;
-        if (rawResult != null)
-        {
-            result = (long)rawResult;
-        }
-
-        return result;
+        return ExecuteScalarCommand(command);
     }
 
     /// <summary>
@@ -112,7 +91,7 @@ public class PostgresDataSaver : IDataSaver
         using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_settlement_to_region(:p_region_id, :p_settlement_id);");
         command.Parameters.AddWithValue("p_region_id", regionId);
         command.Parameters.AddWithValue("p_settlement_id", settlementId);
-        command.ExecuteScalarAsync();
+        ExecuteNonQueryCommand(command);
     }
 
     /// <summary>
@@ -127,7 +106,6 @@ public class PostgresDataSaver : IDataSaver
         string? transportType,
         double? latitude)
     {
-        long result = 0;
         using var command = _dataSource.CreateCommand(
             "SELECT public.rsr_f_add_station(" +
             ":p_codeid, " +
@@ -146,13 +124,7 @@ public class PostgresDataSaver : IDataSaver
         command.Parameters.AddWithValue("p_transport_type", string.IsNullOrEmpty(transportType) ? DBNull.Value : transportType);
         command.Parameters.AddWithValue("p_latitude", latitude == null ? DBNull.Value : latitude);
         
-        var rawResult = command.ExecuteScalarAsync().Result;
-        if (rawResult != null)
-        {
-            result = (long)rawResult;
-        }
-
-        return result;
+        return ExecuteScalarCommand(command);
     }
 
     /// <summary>
@@ -163,6 +135,17 @@ public class PostgresDataSaver : IDataSaver
         using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_station_to_settlement(:p_settlement_id, :p_station_id);");
         command.Parameters.AddWithValue("p_settlement_id", settlementId);
         command.Parameters.AddWithValue("p_station_id", stationId);
+        ExecuteNonQueryCommand(command);
+    }
+
+    private static long ExecuteScalarCommand(NpgsqlCommand command)
+    {
+        var rawResult = command.ExecuteScalarAsync().Result;
+        return rawResult != null ? (long)rawResult : 0;
+    }
+
+    private static void ExecuteNonQueryCommand(NpgsqlCommand command)
+    {
         command.ExecuteScalarAsync();
     }
 
