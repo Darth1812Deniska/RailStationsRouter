@@ -21,6 +21,11 @@ if (downloaderSettings == null)
 }
 
 Console.WriteLine(downloaderSettings.YandexRaspApiToken);
+
+// Чтение настройки логгирования из appsettings.json
+bool isLogging = configuration.GetValue<bool>("IsLogging");
+Logger.IsLogging = isLogging;
+
 YandexApi yandexApi = new YandexApi(downloaderSettings.YandexRaspApiToken);
 Root? root = yandexApi.GetStationsList();
 
