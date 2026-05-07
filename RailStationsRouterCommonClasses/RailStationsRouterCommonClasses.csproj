@@ -8,6 +8,11 @@
 
   <ItemGroup>
     <Folder Include="DbFunctions\" />
+    <Folder Include="SQLite\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.0" />
   </ItemGroup>
 
 </Project>
