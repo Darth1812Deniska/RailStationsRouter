@@ -29,7 +29,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine("Запуск Initialize");
+            Logger.Log("Запуск Initialize");
             _connection = new SqliteConnection(_connectionString);
             _connection.Open();
             CreateTables();
@@ -48,7 +48,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine("Запуск CreateTables");
+            Logger.Log("Запуск CreateTables");
             if (_connection == null) 
                 throw new InvalidOperationException("Соединение не открыто");
 
@@ -151,7 +151,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск AddCode: yandexCode={yandexCode}, esrCode={esrCode}");
+            Logger.Log($"Запуск AddCode: yandexCode={yandexCode}, esrCode={esrCode}");
             if (_connection == null) 
                 throw new InvalidOperationException("Соединение не открыто");
 
@@ -180,7 +180,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск ExecuteCodeOperation: yandexCode={yandexCode}, esrCode={esrCode}");
+            Logger.Log($"Запуск ExecuteCodeOperation: yandexCode={yandexCode}, esrCode={esrCode}");
             // Пробуем найти существующий код
             using (var selectCommand = _connection!.CreateCommand())
             {
@@ -226,7 +226,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск AddCountry: codeId={codeId}, title={title}");
+            Logger.Log($"Запуск AddCountry: codeId={codeId}, title={title}");
             ArgumentNullException.ThrowIfNull(title);
             
             if (_connection == null) 
@@ -254,7 +254,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск AddRegion: codeId={codeId}, title={title}");
+            Logger.Log($"Запуск AddRegion: codeId={codeId}, title={title}");
             ArgumentNullException.ThrowIfNull(title);
             
             if (_connection == null) 
@@ -280,7 +280,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск ExecuteAddOrUpdateEntity: tableName={tableName}, codeId={codeId}, title={title}");
+            Logger.Log($"Запуск ExecuteAddOrUpdateEntity: tableName={tableName}, codeId={codeId}, title={title}");
             // Проверяем существование
             using (var selectCommand = _connection!.CreateCommand())
             {
@@ -333,7 +333,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск AddRegionToCountry: countryId={countryId}, regionId={regionId}");
+            Logger.Log($"Запуск AddRegionToCountry: countryId={countryId}, regionId={regionId}");
             if (_connection == null) 
                 throw new InvalidOperationException("Соединение не открыто");
 
@@ -358,7 +358,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск AddSettlement: codeId={codeId}, title={title}");
+            Logger.Log($"Запуск AddSettlement: codeId={codeId}, title={title}");
             ArgumentNullException.ThrowIfNull(title);
             
             if (_connection == null) 
@@ -386,7 +386,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск AddSettlementToRegion: regionId={regionId}, settlementId={settlementId}");
+            Logger.Log($"Запуск AddSettlementToRegion: regionId={regionId}, settlementId={settlementId}");
             if (_connection == null) 
                 throw new InvalidOperationException("Соединение не открыто");
 
@@ -409,7 +409,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск ExecuteRelationshipOperation: tableName={tableName}, deleteKeyColumn={deleteKeyColumn}, insertKeyColumn={insertKeyColumn}, keyValue1={keyValue1}, keyValue2={keyValue2}");
+            Logger.Log($"Запуск ExecuteRelationshipOperation: tableName={tableName}, deleteKeyColumn={deleteKeyColumn}, insertKeyColumn={insertKeyColumn}, keyValue1={keyValue1}, keyValue2={keyValue2}");
             
             using var command = _connection!.CreateCommand();
             command.CommandText = $@"
@@ -442,7 +442,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск AddStation: codeId={codeId}, direction={direction}, stationType={stationType}, title={title}, longitude={longitude}, transportType={transportType}, latitude={latitude}");
+            Logger.Log($"Запуск AddStation: codeId={codeId}, direction={direction}, stationType={stationType}, title={title}, longitude={longitude}, transportType={transportType}, latitude={latitude}");
             if (_connection == null) 
                 throw new InvalidOperationException("Соединение не открыто");
 
@@ -482,7 +482,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск UpdateStation: id={id}, direction={direction}, stationType={stationType}, title={title}, longitude={longitude}, transportType={transportType}, latitude={latitude}");
+            Logger.Log($"Запуск UpdateStation: id={id}, direction={direction}, stationType={stationType}, title={title}, longitude={longitude}, transportType={transportType}, latitude={latitude}");
             using var command = _connection!.CreateCommand();
             command.CommandText = @"
                 UPDATE station 
@@ -515,7 +515,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск InsertStation: codeId={codeId}, direction={direction}, stationType={stationType}, title={title}, longitude={longitude}, transportType={transportType}, latitude={latitude}");
+            Logger.Log($"Запуск InsertStation: codeId={codeId}, direction={direction}, stationType={stationType}, title={title}, longitude={longitude}, transportType={transportType}, latitude={latitude}");
             using var command = _connection!.CreateCommand();
             command.CommandText = @"
                 INSERT INTO station (direction, codeid, station_type, title, longitude, transport_type, latitude) 
@@ -544,7 +544,7 @@ public class SqliteDataSaver : IDataSaver
     {
         try
         {
-            Console.WriteLine($"Запуск AddStationToSettlement: settlementId={settlementId}, stationId={stationId}");
+            Logger.Log($"Запуск AddStationToSettlement: settlementId={settlementId}, stationId={stationId}");
             if (_connection == null) 
                 throw new InvalidOperationException("Соединение не открыто");
 

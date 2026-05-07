@@ -25,6 +25,7 @@ public class PostgresDataSaver : IDataSaver
     {
         try
         {
+            Logger.Log($"Запуск AddCode: yandexCode={yandexCode}, esrCode={esrCode}");
             using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_code(:p_yandex_code, :p_esr_code);");
             command.Parameters.AddWithValue("p_yandex_code", yandexCode ?? string.Empty);
             command.Parameters.AddWithValue("p_esr_code", esrCode ?? string.Empty);
@@ -45,6 +46,7 @@ public class PostgresDataSaver : IDataSaver
     {
         try
         {
+            Logger.Log($"Запуск AddCountry: codeId={codeId}, title={title}");
             ArgumentNullException.ThrowIfNull(title);
             
             using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_country(:p_codeid, :p_title);");
@@ -67,6 +69,7 @@ public class PostgresDataSaver : IDataSaver
     {
         try
         {
+            Logger.Log($"Запуск AddRegion: codeId={codeId}, title={title}");
             ArgumentNullException.ThrowIfNull(title);
             
             using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_region(:p_code_id, :p_title);");
@@ -89,6 +92,7 @@ public class PostgresDataSaver : IDataSaver
     {
         try
         {
+            Logger.Log($"Запуск AddRegionToCountry: countryId={countryId}, regionId={regionId}");
             using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_region_to_country(:p_country_id, :p_region_id);");
             command.Parameters.AddWithValue("p_country_id", countryId);
             command.Parameters.AddWithValue("p_region_id", regionId);
@@ -106,13 +110,22 @@ public class PostgresDataSaver : IDataSaver
     /// </summary>
     public long AddSettlement(long codeId, string title)
     {
-        ArgumentNullException.ThrowIfNull(title);
-        
-        using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_settlement(:p_code_id, :p_title);");
-        command.Parameters.AddWithValue("p_code_id", codeId);
-        command.Parameters.AddWithValue("p_title", title);
-        
-        return ExecuteScalarCommand(command);
+        try
+        {
+            Logger.Log($"Запуск AddSettlement: codeId={codeId}, title={title}");
+            ArgumentNullException.ThrowIfNull(title);
+            
+            using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_settlement(:p_code_id, :p_title);");
+            command.Parameters.AddWithValue("p_code_id", codeId);
+            command.Parameters.AddWithValue("p_title", title);
+            
+            return ExecuteScalarCommand(command);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при добавлении/обновлении поселения: {ex.Message}");
+            throw;
+        }
     }
 
     /// <summary>
@@ -120,10 +133,19 @@ public class PostgresDataSaver : IDataSaver
     /// </summary>
     public void AddSettlementToRegion(long regionId, long settlementId)
     {
-        using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_settlement_to_region(:p_region_id, :p_settlement_id);");
-        command.Parameters.AddWithValue("p_region_id", regionId);
-        command.Parameters.AddWithValue("p_settlement_id", settlementId);
-        ExecuteNonQueryCommand(command);
+        try
+        {
+            Logger.Log($"Запуск AddSettlementToRegion: regionId={regionId}, settlementId={settlementId}");
+            using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_settlement_to_region(:p_region_id, :p_settlement_id);");
+            command.Parameters.AddWithValue("p_region_id", regionId);
+            command.Parameters.AddWithValue("p_settlement_id", settlementId);
+            ExecuteNonQueryCommand(command);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при добавлении связи поселения с регионом: {ex.Message}");
+            throw;
+        }
     }
 
     /// <summary>
@@ -138,25 +160,34 @@ public class PostgresDataSaver : IDataSaver
         string? transportType,
         double? latitude)
     {
-        using var command = _dataSource.CreateCommand(
-            "SELECT public.rsr_f_add_station(" +
-            ":p_codeid, " +
-            ":p_direction, " +
-            ":p_station_type, " +
-            ":p_title, " +
-            ":p_longitude, " +
-            ":p_transport_type, " +
-            ":p_latitude);");
-        
-        command.Parameters.AddWithValue("p_codeid", codeId);
-        command.Parameters.AddWithValue("p_direction", string.IsNullOrEmpty(direction) ? DBNull.Value : direction);
-        command.Parameters.AddWithValue("p_station_type", string.IsNullOrEmpty(stationType) ? DBNull.Value : stationType);
-        command.Parameters.AddWithValue("p_title", string.IsNullOrEmpty(title) ? DBNull.Value : title);
-        command.Parameters.AddWithValue("p_longitude", longitude == null ? DBNull.Value : longitude);
-        command.Parameters.AddWithValue("p_transport_type", string.IsNullOrEmpty(transportType) ? DBNull.Value : transportType);
-        command.Parameters.AddWithValue("p_latitude", latitude == null ? DBNull.Value : latitude);
-        
-        return ExecuteScalarCommand(command);
+        try
+        {
+            Logger.Log($"Запуск AddStation: codeId={codeId}, direction={direction}, stationType={stationType}, title={title}, longitude={longitude}, transportType={transportType}, latitude={latitude}");
+            using var command = _dataSource.CreateCommand(
+                "SELECT public.rsr_f_add_station(" +
+                ":p_codeid, " +
+                ":p_direction, " +
+                ":p_station_type, " +
+                ":p_title, " +
+                ":p_longitude, " +
+                ":p_transport_type, " +
+                ":p_latitude);");
+            
+            command.Parameters.AddWithValue("p_codeid", codeId);
+            command.Parameters.AddWithValue("p_direction", string.IsNullOrEmpty(direction) ? DBNull.Value : direction);
+            command.Parameters.AddWithValue("p_station_type", string.IsNullOrEmpty(stationType) ? DBNull.Value : stationType);
+            command.Parameters.AddWithValue("p_title", string.IsNullOrEmpty(title) ? DBNull.Value : title);
+            command.Parameters.AddWithValue("p_longitude", longitude == null ? DBNull.Value : longitude);
+            command.Parameters.AddWithValue("p_transport_type", string.IsNullOrEmpty(transportType) ? DBNull.Value : transportType);
+            command.Parameters.AddWithValue("p_latitude", latitude == null ? DBNull.Value : latitude);
+            
+            return ExecuteScalarCommand(command);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при добавлении/обновлении станции: {ex.Message}");
+            throw;
+        }
     }
 
     /// <summary>
@@ -164,10 +195,19 @@ public class PostgresDataSaver : IDataSaver
     /// </summary>
     public void AddStationToSettlement(long settlementId, long stationId)
     {
-        using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_station_to_settlement(:p_settlement_id, :p_station_id);");
-        command.Parameters.AddWithValue("p_settlement_id", settlementId);
-        command.Parameters.AddWithValue("p_station_id", stationId);
-        ExecuteNonQueryCommand(command);
+        try
+        {
+            Logger.Log($"Запуск AddStationToSettlement: settlementId={settlementId}, stationId={stationId}");
+            using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_station_to_settlement(:p_settlement_id, :p_station_id);");
+            command.Parameters.AddWithValue("p_settlement_id", settlementId);
+            command.Parameters.AddWithValue("p_station_id", stationId);
+            ExecuteNonQueryCommand(command);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при добавлении связи станции с поселением: {ex.Message}");
+            throw;
+        }
     }
 
     private static long ExecuteScalarCommand(NpgsqlCommand command)
@@ -183,11 +223,20 @@ public class PostgresDataSaver : IDataSaver
 
     public void Dispose()
     {
-        if (!_disposed)
+        try
         {
-            _dataSource.Dispose();
-            _disposed = true;
+            if (!_disposed)
+            {
+                Logger.Log("Запуск Dispose");
+                _dataSource.Dispose();
+                _disposed = true;
+            }
+            GC.SuppressFinalize(this);
         }
-        GC.SuppressFinalize(this);
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при закрытии соединения с базой данных: {ex.Message}");
+            throw;
+        }
     }
 }
