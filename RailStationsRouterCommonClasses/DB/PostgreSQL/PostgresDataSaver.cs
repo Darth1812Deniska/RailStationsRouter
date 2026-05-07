@@ -23,11 +23,19 @@ public class PostgresDataSaver : IDataSaver
     /// </summary>
     public long AddCode(string? yandexCode, string? esrCode)
     {
-        using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_code(:p_yandex_code, :p_esr_code);");
-        command.Parameters.AddWithValue("p_yandex_code", yandexCode ?? string.Empty);
-        command.Parameters.AddWithValue("p_esr_code", esrCode ?? string.Empty);
-        
-        return ExecuteScalarCommand(command);
+        try
+        {
+            using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_code(:p_yandex_code, :p_esr_code);");
+            command.Parameters.AddWithValue("p_yandex_code", yandexCode ?? string.Empty);
+            command.Parameters.AddWithValue("p_esr_code", esrCode ?? string.Empty);
+            
+            return ExecuteScalarCommand(command);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при добавлении/получении кода: {ex.Message}");
+            throw;
+        }
     }
 
     /// <summary>
@@ -35,13 +43,21 @@ public class PostgresDataSaver : IDataSaver
     /// </summary>
     public long AddCountry(long codeId, string title)
     {
-        ArgumentNullException.ThrowIfNull(title);
-        
-        using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_country(:p_codeid, :p_title);");
-        command.Parameters.AddWithValue("p_codeid", codeId);
-        command.Parameters.AddWithValue("p_title", title);
-        
-        return ExecuteScalarCommand(command);
+        try
+        {
+            ArgumentNullException.ThrowIfNull(title);
+            
+            using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_country(:p_codeid, :p_title);");
+            command.Parameters.AddWithValue("p_codeid", codeId);
+            command.Parameters.AddWithValue("p_title", title);
+            
+            return ExecuteScalarCommand(command);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при добавлении/обновлении страны: {ex.Message}");
+            throw;
+        }
     }
 
     /// <summary>
@@ -49,13 +65,21 @@ public class PostgresDataSaver : IDataSaver
     /// </summary>
     public long AddRegion(long codeId, string title)
     {
-        ArgumentNullException.ThrowIfNull(title);
-        
-        using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_region(:p_code_id, :p_title);");
-        command.Parameters.AddWithValue("p_code_id", codeId);
-        command.Parameters.AddWithValue("p_title", title);
-        
-        return ExecuteScalarCommand(command);
+        try
+        {
+            ArgumentNullException.ThrowIfNull(title);
+            
+            using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_region(:p_code_id, :p_title);");
+            command.Parameters.AddWithValue("p_code_id", codeId);
+            command.Parameters.AddWithValue("p_title", title);
+            
+            return ExecuteScalarCommand(command);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при добавлении/обновлении региона: {ex.Message}");
+            throw;
+        }
     }
 
     /// <summary>
@@ -63,10 +87,18 @@ public class PostgresDataSaver : IDataSaver
     /// </summary>
     public void AddRegionToCountry(long countryId, long regionId)
     {
-        using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_region_to_country(:p_country_id, :p_region_id);");
-        command.Parameters.AddWithValue("p_country_id", countryId);
-        command.Parameters.AddWithValue("p_region_id", regionId);
-        ExecuteNonQueryCommand(command);
+        try
+        {
+            using var command = _dataSource.CreateCommand("SELECT public.rsr_f_add_region_to_country(:p_country_id, :p_region_id);");
+            command.Parameters.AddWithValue("p_country_id", countryId);
+            command.Parameters.AddWithValue("p_region_id", regionId);
+            ExecuteNonQueryCommand(command);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка при добавлении связи региона со страной: {ex.Message}");
+            throw;
+        }
     }
 
     /// <summary>

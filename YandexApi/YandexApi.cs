@@ -21,35 +21,51 @@ namespace YandexRaspApi
 
         public string GetStationsListJson()
         {
-            Dictionary<string, string?> paramsDictionary = new Dictionary<string, string?>()
+            try
             {
-                { "apikey", ApiToken },
-                { "format", null },
-                { "lang", null }
-            };
-
-            NameValueCollection queryString = System.Web.HttpUtility.ParseQueryString(String.Empty);
-            foreach (KeyValuePair<string, string?> pair in paramsDictionary)
-            {
-                if (!string.IsNullOrEmpty(pair.Value))
+                Dictionary<string, string?> paramsDictionary = new Dictionary<string, string?>()
                 {
-                    queryString.Add(pair.Key, pair.Value);
+                    { "apikey", ApiToken },
+                    { "format", null },
+                    { "lang", null }
+                };
+
+                NameValueCollection queryString = System.Web.HttpUtility.ParseQueryString(String.Empty);
+                foreach (KeyValuePair<string, string?> pair in paramsDictionary)
+                {
+                    if (!string.IsNullOrEmpty(pair.Value))
+                    {
+                        queryString.Add(pair.Key, pair.Value);
+                    }
                 }
+
+                using var client = new HttpClient();
+                client.BaseAddress = StationsListUri;
+                
+                var result = client.GetStringAsync($"{StationsListUri}?{queryString}").Result;
+
+                return result;
             }
-
-            using var client = new HttpClient();
-            client.BaseAddress = StationsListUri;
-            
-            var result = client.GetStringAsync($"{StationsListUri}?{queryString}").Result;
-
-            return result;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при получении списка станций (JSON): {ex.Message}");
+                throw;
+            }
         }
 
         public Root? GetStationsList()
         {
-            string jsonResult = GetStationsListJson();
-            var root = JsonSerializer.Deserialize<Root>(jsonResult);
-            return root;
+            try
+            {
+                string jsonResult = GetStationsListJson();
+                var root = JsonSerializer.Deserialize<Root>(jsonResult);
+                return root;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при десериализации списка станций: {ex.Message}");
+                throw;
+            }
         }
     }
 }
