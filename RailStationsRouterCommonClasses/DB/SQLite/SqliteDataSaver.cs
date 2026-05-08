@@ -127,6 +127,137 @@ public class SqliteDataSaver : IDataSaver
                     UNIQUE(settlement_id, station_id),
                     FOREIGN KEY (settlement_id) REFERENCES settlement(id),
                     FOREIGN KEY (station_id) REFERENCES station(id)
+                ),
+
+
+                // === Таблицы для ScheduleTypes (с префиксом schedule_) ===
+                
+                // Таблица перевозчиков (Carrier)
+                @"CREATE TABLE IF NOT EXISTS schedule_carrier (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    code INTEGER,
+                    title TEXT,
+                    codes_json TEXT
+                )",
+
+                // Таблица направлений (Direction)
+                @"CREATE TABLE IF NOT EXISTS schedule_direction (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    code TEXT,
+                    title TEXT
+                )",
+
+                // Таблица транспортных подтипов (TransportSubtype)
+                @"CREATE TABLE IF NOT EXISTS schedule_transport_subtype (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT,
+                    code TEXT,
+                    color TEXT
+                )",
+
+                // Таблица потоков/рейсов (Thread)
+                @"CREATE TABLE IF NOT EXISTS schedule_thread (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    number TEXT,
+                    title TEXT,
+                    short_title TEXT,
+                    express_type TEXT,
+                    transport_type TEXT,
+                    carrier_id INTEGER,
+                    uid TEXT,
+                    vehicle TEXT,
+                    transport_subtype_id INTEGER,
+                    FOREIGN KEY (carrier_id) REFERENCES schedule_carrier(id),
+                    FOREIGN KEY (transport_subtype_id) REFERENCES schedule_transport_subtype(id)
+                )",
+
+                // Таблица расписаний (Schedule)
+                @"CREATE TABLE IF NOT EXISTS schedule_schedule (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    thread_id INTEGER,
+                    is_fuzzy INTEGER,
+                    platform TEXT,
+                    terminal TEXT,
+                    days TEXT,
+                    except_days TEXT,
+                    stops TEXT,
+                    departure TEXT,
+                    arrival TEXT,
+                    FOREIGN KEY (thread_id) REFERENCES schedule_thread(id)
+                )",
+
+                // Таблица интервального расписания (IntervalSchedule)
+                @"CREATE TABLE IF NOT EXISTS schedule_interval_schedule (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    except_days TEXT,
+                    thread_id INTEGER,
+                    is_fuzzy INTEGER,
+                    days TEXT,
+                    stops TEXT,
+                    terminal TEXT,
+                    platform TEXT,
+                    FOREIGN KEY (thread_id) REFERENCES schedule_thread(id)
+                )",
+
+                // Таблица интервалов (Interval)
+                @"CREATE TABLE IF NOT EXISTS schedule_interval (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    density TEXT,
+                    end_time TEXT,
+                    begin_time TEXT,
+                    interval_schedule_id INTEGER,
+                    FOREIGN KEY (interval_schedule_id) REFERENCES schedule_interval_schedule(id)
+                )",
+
+                // Таблица пагинации (Pagination)
+                @"CREATE TABLE IF NOT EXISTS schedule_pagination (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    total INTEGER,
+                    limit INTEGER,
+                    offset INTEGER
+                )",
+
+                // Таблица кодов для ScheduleTypes
+                @"CREATE TABLE IF NOT EXISTS schedule_codes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    sirena TEXT,
+                    iata TEXT,
+                    icao TEXT
+                )",
+
+                // Таблица станций для ScheduleTypes
+                @"CREATE TABLE IF NOT EXISTS schedule_station (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    type TEXT,
+                    title TEXT,
+                    short_title TEXT,
+                    popular_title TEXT,
+                    code TEXT,
+                    station_type TEXT,
+                    station_type_name TEXT,
+                    transport_type TEXT
+                )",
+
+                // Таблица корневого объекта расписания (ScheduleRoot)
+                @"CREATE TABLE IF NOT EXISTS schedule_root (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    date TEXT,
+                    station_id INTEGER,
+                    event TEXT,
+                    pagination_id INTEGER,
+                    schedule_direction_code TEXT,
+                    schedule_direction_title TEXT,
+                    FOREIGN KEY (station_id) REFERENCES schedule_station(id),
+                    FOREIGN KEY (pagination_id) REFERENCES schedule_pagination(id)
+                )",
+
+                // Связь расписания с направлениями
+                @"CREATE TABLE IF NOT EXISTS schedule_directions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    schedule_root_id INTEGER,
+                    direction_id INTEGER,
+                    FOREIGN KEY (schedule_root_id) REFERENCES schedule_root(id),
+                    FOREIGN KEY (direction_id) REFERENCES schedule_direction(id)
                 )"
             };
 
