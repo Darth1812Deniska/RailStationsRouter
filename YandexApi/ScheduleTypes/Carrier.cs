@@ -4,12 +4,12 @@ namespace YandexRaspApi.ScheduleTypes;
 
 public class Carrier
 {
-    [JsonProperty("code")]
-    public int? Code { get; set; }
+    [JsonProperty("code", NullValueHandling = NullValueHandling.Ignore)]
+    public int? code { get; set; }
 
-    [JsonProperty("codes")]
-    public Codes Codes { get; set; }
+    [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
+    public string title { get; set; }
 
-    [JsonProperty("title")]
-    public string Title { get; set; }
+    [JsonProperty("codes", NullValueHandling = NullValueHandling.Ignore)]
+    public Codes codes { get; set; }
 }

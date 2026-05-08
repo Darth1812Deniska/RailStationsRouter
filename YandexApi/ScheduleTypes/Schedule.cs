@@ -6,30 +6,30 @@ namespace YandexRaspApi.ScheduleTypes;
 
 public class Schedule
 {
-    [JsonProperty("arrival")]
-    public DateTime? Arrival { get; set; }
+    [JsonProperty("thread", NullValueHandling = NullValueHandling.Ignore)]
+    public Thread thread { get; set; }
 
-    [JsonProperty("days")]
-    public string Days { get; set; }
+    [JsonProperty("is_fuzzy", NullValueHandling = NullValueHandling.Ignore)]
+    public bool? is_fuzzy { get; set; }
 
-    [JsonProperty("departure")]
-    public DateTime? Departure { get; set; }
+    [JsonProperty("platform", NullValueHandling = NullValueHandling.Ignore)]
+    public string platform { get; set; }
 
-    [JsonProperty("except_days")]
-    public string ExceptDays { get; set; }
+    [JsonProperty("terminal", NullValueHandling = NullValueHandling.Ignore)]
+    public object terminal { get; set; }
 
-    [JsonProperty("is_fuzzy")]
-    public bool? IsFuzzy { get; set; }
+    [JsonProperty("days", NullValueHandling = NullValueHandling.Ignore)]
+    public string days { get; set; }
 
-    [JsonProperty("platform")]
-    public string Platform { get; set; }
+    [JsonProperty("except_days", NullValueHandling = NullValueHandling.Ignore)]
+    public object except_days { get; set; }
 
-    [JsonProperty("stops")]
-    public string Stops { get; set; }
+    [JsonProperty("stops", NullValueHandling = NullValueHandling.Ignore)]
+    public string stops { get; set; }
 
-    [JsonProperty("terminal")]
-    public object Terminal { get; set; }
+    [JsonProperty("departure", NullValueHandling = NullValueHandling.Ignore)]
+    public string departure { get; set; }
 
-    [JsonProperty("thread")]
-    public Thread Thread { get; set; }
+    [JsonProperty("arrival", NullValueHandling = NullValueHandling.Ignore)]
+    public string arrival { get; set; }
 }

@@ -4,33 +4,30 @@ namespace YandexRaspApi.ScheduleTypes;
 
 public class Thread
 {
-    [JsonProperty("carrier")]
-    public object Carrier { get; set; }
+    [JsonProperty("number", NullValueHandling = NullValueHandling.Ignore)]
+    public string number { get; set; }
 
-    [JsonProperty("express_type")]
-    public object ExpressType { get; set; }
+    [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
+    public string title { get; set; }
 
-    [JsonProperty("interval")]
-    public Interval Interval { get; set; }
+    [JsonProperty("short_title", NullValueHandling = NullValueHandling.Ignore)]
+    public string short_title { get; set; }
 
-    [JsonProperty("number")]
-    public string Number { get; set; }
+    [JsonProperty("express_type", NullValueHandling = NullValueHandling.Ignore)]
+    public object express_type { get; set; }
 
-    [JsonProperty("short_title")]
-    public string ShortTitle { get; set; }
+    [JsonProperty("transport_type", NullValueHandling = NullValueHandling.Ignore)]
+    public string transport_type { get; set; }
 
-    [JsonProperty("title")]
-    public string Title { get; set; }
+    [JsonProperty("carrier", NullValueHandling = NullValueHandling.Ignore)]
+    public Carrier carrier { get; set; }
 
-    [JsonProperty("transport_subtype")]
-    public TransportSubtype TransportSubtype { get; set; }
+    [JsonProperty("uid", NullValueHandling = NullValueHandling.Ignore)]
+    public string uid { get; set; }
 
-    [JsonProperty("transport_type")]
-    public string TransportType { get; set; }
+    [JsonProperty("vehicle", NullValueHandling = NullValueHandling.Ignore)]
+    public object vehicle { get; set; }
 
-    [JsonProperty("uid")]
-    public string Uid { get; set; }
-
-    [JsonProperty("vehicle")]
-    public object Vehicle { get; set; }
+    [JsonProperty("transport_subtype", NullValueHandling = NullValueHandling.Ignore)]
+    public TransportSubtype transport_subtype { get; set; }
 }

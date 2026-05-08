@@ -4,24 +4,27 @@ namespace YandexRaspApi.ScheduleTypes;
 
 public class Station
 {
-    [JsonProperty("code")]
-    public string Code { get; set; }
+    [JsonProperty("type", NullValueHandling = NullValueHandling.Ignore)]
+    public string type { get; set; }
 
-    [JsonProperty("popular_title")]
-    public string PopularTitle { get; set; }
+    [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
+    public string title { get; set; }
 
-    [JsonProperty("short_title")]
-    public string ShortTitle { get; set; }
+    [JsonProperty("short_title", NullValueHandling = NullValueHandling.Ignore)]
+    public string short_title { get; set; }
 
-    [JsonProperty("station_type")]
-    public string StationType { get; set; }
+    [JsonProperty("popular_title", NullValueHandling = NullValueHandling.Ignore)]
+    public string popular_title { get; set; }
 
-    [JsonProperty("title")]
-    public string Title { get; set; }
+    [JsonProperty("code", NullValueHandling = NullValueHandling.Ignore)]
+    public string code { get; set; }
 
-    [JsonProperty("transport_type")]
-    public string TransportType { get; set; }
+    [JsonProperty("station_type", NullValueHandling = NullValueHandling.Ignore)]
+    public string station_type { get; set; }
 
-    [JsonProperty("type")]
-    public string Type { get; set; }
+    [JsonProperty("station_type_name", NullValueHandling = NullValueHandling.Ignore)]
+    public string station_type_name { get; set; }
+
+    [JsonProperty("transport_type", NullValueHandling = NullValueHandling.Ignore)]
+    public string transport_type { get; set; }
 }

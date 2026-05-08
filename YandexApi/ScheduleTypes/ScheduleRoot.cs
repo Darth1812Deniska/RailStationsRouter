@@ -4,24 +4,27 @@ namespace YandexRaspApi.ScheduleTypes;
 
 public class ScheduleRoot
 {
-    [JsonProperty("date")]
-    public string Date { get; set; }
+    [JsonProperty("date", NullValueHandling = NullValueHandling.Ignore)]
+    public object date { get; set; }
 
-    [JsonProperty("directions")]
-    public List<Direction> Directions { get; set; }
+    [JsonProperty("station", NullValueHandling = NullValueHandling.Ignore)]
+    public Station station { get; set; }
 
-    [JsonProperty("interval_schedule")]
-    public List<IntervalSchedule> IntervalSchedule { get; set; }
+    [JsonProperty("event", NullValueHandling = NullValueHandling.Ignore)]
+    public string @event { get; set; }
 
-    [JsonProperty("pagination")]
-    public Pagination Pagination { get; set; }
+    [JsonProperty("pagination", NullValueHandling = NullValueHandling.Ignore)]
+    public Pagination pagination { get; set; }
 
-    [JsonProperty("schedule")]
-    public List<Schedule> Schedule { get; set; }
+    [JsonProperty("schedule", NullValueHandling = NullValueHandling.Ignore)]
+    public List<Schedule> schedule { get; set; }
 
-    [JsonProperty("schedule_direction")]
-    public ScheduleDirection ScheduleDirection { get; set; }
+    [JsonProperty("interval_schedule", NullValueHandling = NullValueHandling.Ignore)]
+    public List<object> interval_schedule { get; set; }
 
-    [JsonProperty("station")]
-    public Station Station { get; set; }
+    [JsonProperty("directions", NullValueHandling = NullValueHandling.Ignore)]
+    public List<Direction> directions { get; set; }
+
+    [JsonProperty("schedule_direction", NullValueHandling = NullValueHandling.Ignore)]
+    public ScheduleDirection schedule_direction { get; set; }
 }

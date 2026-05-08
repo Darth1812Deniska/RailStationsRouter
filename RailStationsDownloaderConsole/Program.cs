@@ -69,9 +69,21 @@ else
     Console.WriteLine("SQLite база данных успешно инициализирована");
 }
 
-// Использование RailStationDownloader для сохранения данных
+/*// Использование RailStationDownloader для сохранения данных
 var railStationDownloader = new RailStationDownloader(dataSaver);
 railStationDownloader.DownloadAndSaveStations(root);
 
 Console.WriteLine("Загрузка данных завершена");
-dataSaver.Dispose();
+dataSaver.Dispose();*/
+
+var scheduleList = yandexApi.GetScheduleList("s2000005");
+foreach (var schedule in scheduleList.schedule)
+{
+    var thread = schedule.thread;
+    Console.WriteLine(thread.number);
+    Console.WriteLine(thread.title);
+}
+Console.WriteLine(scheduleList.date); 
+Console.WriteLine(scheduleList.@event);
+
+

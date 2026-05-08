@@ -4,12 +4,12 @@ namespace YandexRaspApi.ScheduleTypes;
 
 public class Interval
 {
-    [JsonProperty("begin_time")]
-    public DateTime? BeginTime { get; set; }
+    [JsonProperty("density", NullValueHandling = NullValueHandling.Ignore)]
+    public string density { get; set; }
 
-    [JsonProperty("density")]
-    public string Density { get; set; }
+    [JsonProperty("end_time", NullValueHandling = NullValueHandling.Ignore)]
+    public DateTime? end_time { get; set; }
 
-    [JsonProperty("end_time")]
-    public DateTime? EndTime { get; set; }
+    [JsonProperty("begin_time", NullValueHandling = NullValueHandling.Ignore)]
+    public DateTime? begin_time { get; set; }
 }

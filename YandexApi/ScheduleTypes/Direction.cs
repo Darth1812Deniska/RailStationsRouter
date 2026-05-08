@@ -4,9 +4,9 @@ namespace YandexRaspApi.ScheduleTypes;
 
 public class Direction
 {
-    [JsonProperty("code")]
-    public string Code { get; set; }
+    [JsonProperty("code", NullValueHandling = NullValueHandling.Ignore)]
+    public string code { get; set; }
 
-    [JsonProperty("title")]
-    public string Title { get; set; }
+    [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
+    public string title { get; set; }
 }
