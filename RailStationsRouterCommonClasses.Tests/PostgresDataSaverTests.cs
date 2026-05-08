@@ -23,6 +23,7 @@ public class PostgresDataSaverTests : IDisposable
         {
             _skipTests = false;
             _dataSaver = new PostgresDataSaver(_connectionString);
+            _dataSaver.Initialize();
         }
     }
 

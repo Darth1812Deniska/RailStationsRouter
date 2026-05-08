@@ -19,6 +19,267 @@ public class PostgresDataSaver : IDataSaver
     }
 
     /// <summary>
+    /// Открывает соединение с базой данных и создает таблицы при необходимости
+    /// </summary>
+    public void Initialize()
+    {
+        try
+        {
+            Logger.Log("Запуск Initialize");
+            CreateSchemas();
+            CreateTables();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка инициализации PostgreSQL базы данных: {ex.Message}");
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Создает необходимые схемы в базе данных
+    /// </summary>
+    private void CreateSchemas()
+    {
+        try
+        {
+            Logger.Log("Запуск CreateSchemas");
+            using var command = _dataSource.CreateCommand("""
+                DO $$ BEGIN
+                    CREATE SCHEMA IF NOT EXISTS stations_list;
+                EXCEPTION
+                    WHEN duplicate_schema THEN NULL;
+                END $$;
+                
+                DO $$ BEGIN
+                    CREATE SCHEMA IF NOT EXISTS schedule;
+                EXCEPTION
+                    WHEN duplicate_schema THEN NULL;
+                END $$;
+                """);
+            command.ExecuteNonQuery();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка создания схем PostgreSQL: {ex.Message}");
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Создает все необходимые таблицы в базе данных
+    /// </summary>
+    private void CreateTables()
+    {
+        try
+        {
+            Logger.Log("Запуск CreateTables");
+            
+            var commands = new[]
+            {
+                // === Таблицы в схеме public (для StationsListTypes) ===
+                
+                // Таблица для кодов (yandex_code, esr_code)
+                @"CREATE TABLE IF NOT EXISTS public.codes (
+                    id BIGSERIAL PRIMARY KEY,
+                    yandex_code TEXT,
+                    esr_code TEXT,
+                    UNIQUE(yandex_code, esr_code)
+                )",
+
+                // Таблица стран
+                @"CREATE TABLE IF NOT EXISTS public.country (
+                    id BIGSERIAL PRIMARY KEY,
+                    title TEXT NOT NULL,
+                    codeid BIGINT UNIQUE REFERENCES public.codes(id)
+                )",
+
+                // Таблица регионов
+                @"CREATE TABLE IF NOT EXISTS public.region (
+                    id BIGSERIAL PRIMARY KEY,
+                    title TEXT NOT NULL,
+                    codeid BIGINT UNIQUE REFERENCES public.codes(id)
+                )",
+
+                // Таблица поселений
+                @"CREATE TABLE IF NOT EXISTS public.settlement (
+                    id BIGSERIAL PRIMARY KEY,
+                    title TEXT NOT NULL,
+                    codeid BIGINT UNIQUE REFERENCES public.codes(id)
+                )",
+
+                // Таблица станций
+                @"CREATE TABLE IF NOT EXISTS public.station (
+                    id BIGSERIAL PRIMARY KEY,
+                    direction TEXT,
+                    codeid BIGINT REFERENCES public.codes(id),
+                    station_type TEXT,
+                    title TEXT,
+                    longitude DOUBLE PRECISION,
+                    transport_type TEXT,
+                    latitude DOUBLE PRECISION
+                )",
+
+                // Связующая таблица страна-регион
+                @"CREATE TABLE IF NOT EXISTS public.country_regions (
+                    id BIGSERIAL PRIMARY KEY,
+                    countryid BIGINT NOT NULL REFERENCES public.country(id),
+                    regionid BIGINT NOT NULL REFERENCES public.region(id),
+                    UNIQUE(countryid, regionid)
+                )",
+
+                // Связующая таблица регион-поселение
+                @"CREATE TABLE IF NOT EXISTS public.region_settlements (
+                    id BIGSERIAL PRIMARY KEY,
+                    regionid BIGINT NOT NULL REFERENCES public.region(id),
+                    settlementid BIGINT NOT NULL REFERENCES public.settlement(id),
+                    UNIQUE(regionid, settlementid)
+                )",
+
+                // Связующая таблица поселение-станция
+                @"CREATE TABLE IF NOT EXISTS public.settlement_stations (
+                    id BIGSERIAL PRIMARY KEY,
+                    settlement_id BIGINT NOT NULL REFERENCES public.settlement(id),
+                    station_id BIGINT NOT NULL REFERENCES public.station(id),
+                    UNIQUE(settlement_id, station_id)
+                )",
+
+                // === Таблицы в схеме schedule (для ScheduleTypes) ===
+                
+                // Таблица перевозчиков (Carrier)
+                @"CREATE TABLE IF NOT EXISTS schedule.carrier (
+                    id BIGSERIAL PRIMARY KEY,
+                    code INTEGER,
+                    title TEXT,
+                    codes_json JSONB
+                )",
+
+                // Таблица направлений (Direction)
+                @"CREATE TABLE IF NOT EXISTS schedule.direction (
+                    id BIGSERIAL PRIMARY KEY,
+                    code TEXT,
+                    title TEXT
+                )",
+
+                // Таблица транспортных подтипов (TransportSubtype)
+                @"CREATE TABLE IF NOT EXISTS schedule.transport_subtype (
+                    id BIGSERIAL PRIMARY KEY,
+                    title TEXT,
+                    code TEXT,
+                    color TEXT
+                )",
+
+                // Таблица потоков/рейсов (Thread)
+                @"CREATE TABLE IF NOT EXISTS schedule.thread (
+                    id BIGSERIAL PRIMARY KEY,
+                    number TEXT,
+                    title TEXT,
+                    short_title TEXT,
+                    express_type TEXT,
+                    transport_type TEXT,
+                    carrier_id BIGINT REFERENCES schedule.carrier(id),
+                    uid TEXT,
+                    vehicle JSONB,
+                    transport_subtype_id BIGINT REFERENCES schedule.transport_subtype(id)
+                )",
+
+                // Таблица расписаний (Schedule)
+                @"CREATE TABLE IF NOT EXISTS schedule.schedule (
+                    id BIGSERIAL PRIMARY KEY,
+                    thread_id BIGINT REFERENCES schedule.thread(id),
+                    is_fuzzy BOOLEAN,
+                    platform TEXT,
+                    terminal JSONB,
+                    days TEXT,
+                    except_days JSONB,
+                    stops TEXT,
+                    departure TEXT,
+                    arrival TEXT
+                )",
+
+                // Таблица интервального расписания (IntervalSchedule)
+                @"CREATE TABLE IF NOT EXISTS schedule.interval_schedule (
+                    id BIGSERIAL PRIMARY KEY,
+                    except_days JSONB,
+                    thread_id BIGINT REFERENCES schedule.thread(id),
+                    is_fuzzy BOOLEAN,
+                    days TEXT,
+                    stops TEXT,
+                    terminal JSONB,
+                    platform TEXT
+                )",
+
+                // Таблица интервалов (Interval)
+                @"CREATE TABLE IF NOT EXISTS schedule.interval (
+                    id BIGSERIAL PRIMARY KEY,
+                    density TEXT,
+                    end_time TIMESTAMP,
+                    begin_time TIMESTAMP,
+                    interval_schedule_id BIGINT REFERENCES schedule.interval_schedule(id)
+                )",
+
+                // Таблица пагинации (Pagination)
+                @"CREATE TABLE IF NOT EXISTS schedule.pagination (
+                    id BIGSERIAL PRIMARY KEY,
+                    total INTEGER,
+                    limit INTEGER,
+                    offset INTEGER
+                )",
+
+                // Таблица кодов для ScheduleTypes
+                @"CREATE TABLE IF NOT EXISTS schedule.codes (
+                    id BIGSERIAL PRIMARY KEY,
+                    sirena JSONB,
+                    iata JSONB,
+                    icao JSONB
+                )",
+
+                // Таблица станций для ScheduleTypes
+                @"CREATE TABLE IF NOT EXISTS schedule.station (
+                    id BIGSERIAL PRIMARY KEY,
+                    type TEXT,
+                    title TEXT,
+                    short_title TEXT,
+                    popular_title TEXT,
+                    code TEXT,
+                    station_type TEXT,
+                    station_type_name TEXT,
+                    transport_type TEXT
+                )",
+
+                // Таблица корневого объекта расписания (ScheduleRoot)
+                @"CREATE TABLE IF NOT EXISTS schedule.schedule_root (
+                    id BIGSERIAL PRIMARY KEY,
+                    date JSONB,
+                    station_id BIGINT REFERENCES schedule.station(id),
+                    event TEXT,
+                    pagination_id BIGINT REFERENCES schedule.pagination(id),
+                    schedule_direction_code TEXT,
+                    schedule_direction_title TEXT
+                )",
+
+                // Связь расписания с направлениями
+                @"CREATE TABLE IF NOT EXISTS schedule.schedule_directions (
+                    id BIGSERIAL PRIMARY KEY,
+                    schedule_root_id BIGINT REFERENCES schedule.schedule_root(id),
+                    direction_id BIGINT REFERENCES schedule.direction(id)
+                )"
+            };
+
+            foreach (var commandText in commands)
+            {
+                using var command = _dataSource.CreateCommand(commandText);
+                command.ExecuteNonQuery();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка создания таблиц PostgreSQL: {ex.Message}");
+            throw;
+        }
+    }
+
+    /// <summary>
     /// Добавляет или получает код (yandex_code, esr_code)
     /// </summary>
     public long AddCode(string? yandexCode, string? esrCode)
@@ -212,13 +473,13 @@ public class PostgresDataSaver : IDataSaver
 
     private static long ExecuteScalarCommand(NpgsqlCommand command)
     {
-        var rawResult = command.ExecuteScalarAsync().Result;
+        var rawResult = command.ExecuteScalar();
         return rawResult != null ? (long)rawResult : 0;
     }
 
     private static void ExecuteNonQueryCommand(NpgsqlCommand command)
     {
-        command.ExecuteScalarAsync();
+        command.ExecuteNonQuery();
     }
 
     public void Dispose()
