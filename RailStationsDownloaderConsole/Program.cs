@@ -27,7 +27,7 @@ bool isLogging = configuration.GetValue<bool>("IsLogging");
 Logger.IsLogging = isLogging;
 
 YandexApi yandexApi = new YandexApi(downloaderSettings.YandexRaspApiToken);
-Root? root = yandexApi.GetStationsList();
+StationsListRoot? root = yandexApi.GetStationsList();
 
 if (root == null)
 {

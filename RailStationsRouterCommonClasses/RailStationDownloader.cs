@@ -16,7 +16,7 @@ namespace RailStationsRouterCommonClasses
         /// <summary>
         /// Загружает и сохраняет данные о станциях из Яндекс в базу данных
         /// </summary>
-        public void DownloadAndSaveStations(Root root)
+        public void DownloadAndSaveStations(StationsListRoot root)
         {
             if (root?.countries == null)
                 return;

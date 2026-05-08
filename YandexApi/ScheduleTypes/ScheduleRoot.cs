@@ -2,7 +2,7 @@
 
 namespace YandexRaspApi.ScheduleTypes;
 
-public class Root
+public class ScheduleRoot
 {
     [JsonProperty("date")]
     public string Date { get; set; }

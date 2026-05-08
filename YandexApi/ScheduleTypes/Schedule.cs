@@ -2,7 +2,7 @@
 
 namespace YandexRaspApi.ScheduleTypes;
 
-// Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+// ScheduleRoot myDeserializedClass = JsonConvert.DeserializeObject<ScheduleRoot>(myJsonResponse);
 
 public class Schedule
 {

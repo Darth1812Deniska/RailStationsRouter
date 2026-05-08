@@ -1,6 +1,6 @@
 namespace YandexRaspApi.StationsListTypes;
 
-public class Root
+public class StationsListRoot
 {
     public List<Country> countries { get; set; }
 }

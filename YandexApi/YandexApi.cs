@@ -10,6 +10,7 @@ namespace YandexRaspApi
     {
         private readonly string _apiToken;
         private const string StationsListAddress = "https://api.rasp.yandex.net/v3.0/stations_list/";
+        
         private Uri StationsListUri => new Uri(StationsListAddress);
 
         private string ApiToken => _apiToken;
@@ -53,12 +54,12 @@ namespace YandexRaspApi
             }
         }
 
-        public Root? GetStationsList()
+        public StationsListRoot? GetStationsList()
         {
             try
             {
                 string jsonResult = GetStationsListJson();
-                var root = JsonSerializer.Deserialize<Root>(jsonResult);
+                var root = JsonSerializer.Deserialize<StationsListRoot>(jsonResult);
                 return root;
             }
             catch (Exception ex)
