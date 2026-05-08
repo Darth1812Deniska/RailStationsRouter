@@ -69,87 +69,9 @@ else
     Console.WriteLine("SQLite база данных успешно инициализирована");
 }
 
-List<Country> countries = root.countries;
-
-foreach (Country country in countries)
-{
-    var countryCode = country.codes;
-    if (countryCode != null)
-    {
-        // Сохранение данных в выбранную БД
-        var countryCodeId = dataSaver.AddCode(countryCode.yandex_code, countryCode.esr_code);
-        var countryId = dataSaver.AddCountry(countryCodeId, country.title ?? string.Empty);
-        
-        List<Region>? regions = country.regions;
-        if (regions != null)
-        {
-            foreach (Region region in regions)
-            {
-                var regionCode = region.codes;
-                if (regionCode != null)
-                {
-                    // Сохранение региона
-                    var regionCodeId = dataSaver.AddCode(regionCode.yandex_code, regionCode.esr_code);
-                    var regionId = dataSaver.AddRegion(regionCodeId, region.title ?? string.Empty);
-                    dataSaver.AddRegionToCountry(countryId, regionId);
-                    
-                    List<Settlement>? settlements = region.settlements;
-                    if (settlements != null)
-                    {
-                        foreach (Settlement settlement in settlements)
-                        {
-                            var settlementCode = settlement.codes;
-                            
-                            // Сохранение поселения
-                            long settlementCodeId = dataSaver.AddCode(settlementCode.yandex_code, settlementCode.esr_code);
-                            long settlementId = dataSaver.AddSettlement(settlementCodeId, settlement.title ?? string.Empty);
-                            dataSaver.AddSettlementToRegion(regionId, settlementId);
-                            
-                            foreach (Station station in settlement.stations)
-                            {
-                                Codes? codes = station.codes;
-                                if (codes != null)
-                                {
-                                    double? convLongitude = null;
-                                    if (station.longitude is JsonElement
-                                        {
-                                            ValueKind: JsonValueKind.Number
-                                        } jsLongitude)
-                                    {
-                                        convLongitude = jsLongitude.GetDouble();
-                                    }
-
-                                    double? convLatitude = null;
-                                    if (station.latitude is JsonElement { ValueKind: JsonValueKind.Number } jsLatitude)
-                                    {
-                                        convLatitude = jsLatitude.GetDouble();
-                                    }
-
-                                    // Сохранение станции
-                                    long codeId = dataSaver.AddCode(codes.yandex_code, codes.esr_code);
-                                    long stationId = dataSaver.AddStation(codeId,
-                                        station.direction,
-                                        station.station_type,
-                                        station.title,
-                                        convLongitude,
-                                        station.transport_type,
-                                        convLatitude);
-                                    dataSaver.AddStationToSettlement(settlementId, stationId);
-                                    
-                                    string fullStationText = $"Страна:{country.title}, " +
-                                                             $"Регион: {region.title}, " +
-                                                             $"Поселение: {settlement.title}, " +
-                                                             $"Станция: {station.title}";
-                                    Console.WriteLine(fullStationText);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+// Использование RailStationDownloader для сохранения данных
+var railStationDownloader = new RailStationDownloader(dataSaver);
+railStationDownloader.DownloadAndSaveStations(root);
 
 Console.WriteLine("Загрузка данных завершена");
 dataSaver.Dispose();
